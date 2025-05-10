@@ -118,9 +118,12 @@ Este proyecto está bajo la licencia **MIT**. Consulta el archivo [LICENSE](LICE
 - Si tienes preguntas o sugerencias, no dudes en abrir un issue o contactarme directamente.
 
 ---
-/*
 ⠀ ／l
 （ﾟ､ ｡ ７
 ⠀ l、ﾞ ~ヽ
   じしf_, )ノ ❤️
-*/
+
+steps:
+- make a main.cpp file
+- update directory tree
+
