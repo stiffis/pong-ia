@@ -64,6 +64,26 @@ Sigue estos pasos para clonar y ejecutar el proyecto en tu máquina local:
 ## Estructura del Proyecto
 
 ```txt
+PongIA
+├── build.sh
+├── docs
+│   ├── DOCS.md
+│   └── README.md
+├── include
+│   └── utec
+│       ├── agent
+│       ├── algebra
+│       │   ├── matmul.h
+│       │   └── Tensor.h
+│       └── nn
+│           └── neural_network.h
+├── LICENSE
+├── src
+├── tests
+│   ├── test_benchmark_matmul.cpp
+│   ├── test_matmul.cpp
+│   └── test_tensor.cpp
+└── tree.txt
 
 ```
 
