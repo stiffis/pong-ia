@@ -21,7 +21,7 @@ void test2() {
     std::cout << "test2: " << (res ? "Passed" : "Failed") << std::endl;
 }
 
-void test3() {
+void test3() { // BUG: this shit need to throw an exception(error).
     utec::algebra::Tensor<int, 3> t3(2, 2, 2);
     t3.reshape(2, 4, 1);
     bool res = (t3.shape() == std::array<size_t, 3>{2, 4, 1});

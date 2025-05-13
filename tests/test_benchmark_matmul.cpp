@@ -14,8 +14,8 @@ void benchmark_matmul() {
     Tensor<int, 2> B(shapeB);
 
     // Inicializar las matrices con algunos valores
-    A.fill(1);
-    B.fill(1);
+    A.fill(10);
+    B.fill(13);
 
     // Realizar el benchmark
     auto start = std::chrono::high_resolution_clock::now();
