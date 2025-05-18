@@ -6,17 +6,30 @@
 ├── include
 │   └── utec
 │       ├── agent
+│       │   ├── EnvGym.cpp
+│       │   ├── EnvGym.h
+│       │   ├── PongAgent.cpp
+│       │   ├── PongAgent.h
+│       │   └── state.h
 │       ├── algebra
 │       │   ├── matmul.h
 │       │   └── Tensor.h
 │       └── nn
+│           ├── activation.h
+│           ├── dense.h
+│           ├── layer.h
+│           ├── loss.h
 │           └── neural_network.h
 ├── LICENSE
 ├── src
+├── temp
+│   └── train.cpp
 ├── tests
+│   ├── test_agent_env.cpp
 │   ├── test_benchmark_matmul.cpp
 │   ├── test_matmul.cpp
+│   ├── test_neural_network.cpp
 │   └── test_tensor.cpp
 └── tree.txt
 
-9 directories, 11 files
+10 directories, 23 files
