@@ -40,9 +40,7 @@ template <typename T, std::size_t Rank> class Tensor {
 
   public:
     using shape_type = std::array<std::size_t, Rank>;
-    std::vector<T> getData(){
-        return data_;
-    }
+    std::vector<T> getData() { return data_; }
     Tensor() = default;
 
     explicit Tensor(const shape_type &shape)

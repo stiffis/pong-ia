@@ -1,15 +1,16 @@
 #pragma once
-#include <vector>
+#include "Tensor.h"
 #include <stdexcept>
 #include <type_traits>
-#include "Tensor.h"
+#include <vector>
 
 namespace utec::algebra {
 
 template <typename T>
-Tensor<T, 2> matmul(const Tensor<T, 2>& A, const Tensor<T, 2>& B) {
+Tensor<T, 2> matmul(const Tensor<T, 2> &A, const Tensor<T, 2> &B) {
     if (A.shape()[1] != B.shape()[0]) {
-        throw std::invalid_argument("Matrices cannot be multiplied: incompatible shapes");
+        throw std::invalid_argument(
+            "Matrices cannot be multiplied: incompatible shapes");
     }
     std::array<std::size_t, 2> result_shape = {A.shape()[0], B.shape()[1]};
     Tensor<T, 2> result(result_shape);

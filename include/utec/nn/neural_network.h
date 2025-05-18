@@ -1,134 +1,62 @@
 #pragma once
-#include "../utec/algebra/Tensor.h"
-#include "../utec/algebra/matmul.h"
-#include <array>
-#include <cmath>
-#include <iostream>
-#include <random>
+#include "../algebra/Tensor.h"
+#include "../algebra/matmul.h"
+#include "activation.h"
+#include "dense.h"
+#include "layer.h"
+#include "loss.h"
+#include <memory>
+#include <vector>
 
-using namespace utec::algebra;
-class NeuralNetwork {
+namespace utec::neural_network {
+
+template <typename T> class NeuralNetwork {
+    std::vector<std::unique_ptr<ILayer<T>>> layers;
+    MSELoss<T> criterion;
+
   public:
-    NeuralNetwork(std::vector<int> layer_sizes) {
-        layers = layer_sizes.size();
-        sizes = layer_sizes;
+    void add_layer(std::unique_ptr<ILayer<T>> layer) {
+        layers.push_back(std::move(layer));
+    }
 
-        // Inicializar los pesos y sesgos
-        for (int i = 1; i < layers; ++i) {
-            weights.push_back(random_matrix(sizes[i], sizes[i - 1]));
-            biases.push_back(random_vector(sizes[i]));
+    algebra::Tensor<T, 2> forward(const algebra::Tensor<T, 2> &x) {
+        algebra::Tensor<T, 2> out = x;
+        for (auto &layer : layers) {
+            out = layer->forward(out);
+        }
+        return out;
+    }
+
+    void backward(const algebra::Tensor<T, 2> &grad) {
+        algebra::Tensor<T, 2> grad_current = grad;
+        for (auto it = layers.rbegin(); it != layers.rend(); ++it) {
+            grad_current = (*it)->backward(grad_current);
         }
     }
 
-    // Propagación hacia adelante
-    Tensor<float, 2> forward(const Tensor<float, 2> &input) {
-        Tensor<float, 2> current_output = input;
-        outputs.clear();
-        outputs.push_back(current_output);
-
-        // Cálculo de las salidas de cada capa
-        for (int i = 0; i < layers - 1; ++i) {
-            current_output = activation_function(
-                matmul(weights[i], current_output) + biases[i]);
-            outputs.push_back(current_output);
-        }
-
-        return current_output;
-    }
-
-    // Backpropagation (actualiza pesos y sesgos)
-    void backward(const Tensor<float, 2> &input, const Tensor<float, 2> &target,
-                  float learning_rate) {
-        // Calcular los gradientes
-        Tensor<float, 2> output_error = loss_derivative(outputs.back(), target);
-
-        // Propagar hacia atrás
-        for (int i = layers - 2; i >= 0; --i) {
-            // Calcular gradientes para la capa actual
-            Tensor<float, 2> layer_error =
-                output_error * activation_derivative(outputs[i + 1]);
-
-            // Actualizar los pesos y los sesgos
-            weights[i] = weights[i] -
-                         learning_rate * outer_product(layer_error, outputs[i]);
-            biases[i] = biases[i] - learning_rate * layer_error;
-        }
-    }
-
-    // Función de activación (ReLU)
-    Tensor<float, 2> activation_function(const Tensor<float, 2> &input) {
-        Tensor<float, 2> result = input;
-        for (size_t i = 0; i < input.shape()[0]; ++i) {
-            for (size_t j = 0; j < input.shape()[1]; ++j) {
-                result(i, j) = std::max(0.0f, input(i, j)); // ReLU
+    void optimize(T lr) {
+        for (auto &layer : layers) {
+            // Solo actualizamos capas Dense (tendrás que castear o usar una
+            // interfaz)
+            if (auto dense = dynamic_cast<Dense<T> *>(layer.get())) {
+                dense->update_params(lr);
             }
         }
-        return result;
     }
 
-    // Derivada de la función de activación (ReLU)
-    Tensor<float, 2> activation_derivative(const Tensor<float, 2> &input) {
-        Tensor<float, 2> result = input;
-        for (size_t i = 0; i < input.shape()[0]; ++i) {
-            for (size_t j = 0; j < input.shape()[1]; ++j) {
-                result(i, j) =
-                    (input(i, j) > 0) ? 1.0f : 0.0f; // Derivada de ReLU
-            }
+    // Entrena la red con X, Y durante epochs
+    T train(const algebra::Tensor<T, 2> &X, const algebra::Tensor<T, 2> &Y,
+            size_t epochs, T lr) {
+        T loss_val = 0;
+        for (size_t e = 0; e < epochs; ++e) {
+            auto pred = forward(X);
+            loss_val = criterion.forward(pred, Y);
+            auto grad = criterion.backward();
+            backward(grad);
+            optimize(lr);
         }
-        return result;
-    }
-
-  private:
-    int layers;
-    std::vector<int> sizes;
-    std::vector<Tensor<float, 2>> weights; // pesos de cada capa
-    std::vector<Tensor<float, 2>> biases;  // sesgos de cada capa
-    std::vector<Tensor<float, 2>> outputs; // salidas de cada capa
-
-    // Métodos de utilidad
-    Tensor<float, 2> random_vector(int size) {
-        Tensor<float, 2> vec(size, 1);
-        std::random_device rd;
-        std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
-        for (int i = 0; i < size; ++i) {
-            vec(i, 0) = dist(rd);
-        }
-        return vec;
-    }
-
-    Tensor<float, 2> random_matrix(int rows, int cols) {
-        Tensor<float, 2> mat(rows, cols);
-        std::random_device rd;
-        std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
-        for (int i = 0; i < rows; ++i) {
-            for (int j = 0; j < cols; ++j) {
-                mat(i, j) = dist(rd);
-            }
-        }
-        return mat;
-    }
-
-    Tensor<float, 2> loss_derivative(const Tensor<float, 2> &output,
-                                     const Tensor<float, 2> &target) {
-        Tensor<float, 2> result = output;
-        for (size_t i = 0; i < result.shape()[0]; ++i) {
-            for (size_t j = 0; j < result.shape()[1]; ++j) {
-                result(i, j) =
-                    result(i, j) - target(i, j); // Error cuadrático medio
-            }
-        }
-        return result;
-    }
-
-    // Producto externo entre dos tensores
-    Tensor<float, 2> outer_product(const Tensor<float, 2> &v1,
-                                   const Tensor<float, 2> &v2) {
-        Tensor<float, 2> result(v1.shape()[0], v2.shape()[1]);
-        for (size_t i = 0; i < v1.shape()[0]; ++i) {
-            for (size_t j = 0; j < v2.shape()[1]; ++j) {
-                result(i, j) = v1(i, 0) * v2(0, j);
-            }
-        }
-        return result;
+        return loss_val;
     }
 };
+
+} // namespace utec::neural_network
