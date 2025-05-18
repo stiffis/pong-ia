@@ -61,13 +61,14 @@ void test6() {
 }
 
 void test7() {
-    utec::algebra::Tensor<int, 2> m2(2,3);
+    utec::algebra::Tensor<int, 2> m2(2, 3);
     auto mt = m2.transpose_2d();
-    bool res = (mt.shape() == std::array<size_t, 2>{3, 2} && mt(0,1) == mt(1,0));
+    bool res =
+        (mt.shape() == std::array<size_t, 2>{3, 2} && mt(0, 1) == mt(1, 0));
     std::cout << "test7: " << (res ? "Passed" : "Failed") << std::endl;
 }
 
-int main(){
+int main() {
     test1();
     test2();
     test3();
