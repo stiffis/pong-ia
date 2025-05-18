@@ -5,13 +5,11 @@
 #include "../include/utec/agent/state.h"
 
 #include "../include/utec/algebra/Tensor.h"
-#include "../include/utec/algebra/matmul.h"
 
 #include "../include/utec/nn/activation.h"
 #include "../include/utec/nn/dense.h"
-#include "../include/utec/nn/layer.h"
-#include "../include/utec/nn/loss.h"
 #include "../include/utec/nn/neural_network.h"
+
 #include <iostream>
 
 template <typename T>
