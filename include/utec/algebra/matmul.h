@@ -1,4 +1,6 @@
-#pragma once
+#ifndef MATMUL_H
+#define MATMUL_H
+
 #include "Tensor.h"
 #include <stdexcept>
 #include <type_traits>
@@ -28,3 +30,4 @@ Tensor<T, 2> matmul(const Tensor<T, 2> &A, const Tensor<T, 2> &B) {
 }
 
 } // namespace utec::algebra
+#endif // MATMUL_H

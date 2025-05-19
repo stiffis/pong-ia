@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STATE_H
+#define STATE_H
 
 namespace utec::neural_network {
 
@@ -12,3 +13,4 @@ struct State {
 };
 
 } // namespace utec::neural_network
+#endif // !STATE_H

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef LOSS_H
+#define LOSS_H
+
 #include "../algebra/Tensor.h"
 #include "../algebra/matmul.h"
 
@@ -34,3 +36,4 @@ template <typename T> class MSELoss {
 };
 
 } // namespace utec::neural_network
+#endif // !LOSS_H

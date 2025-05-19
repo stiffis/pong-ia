@@ -1,4 +1,6 @@
-#pragma once
+#ifndef DENSE_H
+#define DENSE_H
+
 #include "../algebra/Tensor.h"
 #include "../algebra/matmul.h"
 #include "layer.h"
@@ -62,3 +64,4 @@ template <typename T> class Dense : public ILayer<T> {
 };
 
 } // namespace utec::neural_network
+#endif // !DENSE_H

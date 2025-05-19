@@ -1,4 +1,6 @@
-#pragma once
+#ifndef PONG_AGENT_H
+#define PONG_AGENT_H
+
 #include "../algebra/Tensor.h"
 #include "../algebra/matmul.h"
 #include "../nn/activation.h"
@@ -24,3 +26,4 @@ template <typename T> class PongAgent {
 };
 
 } // namespace utec::neural_network
+#endif // !PONG_AGENT_H

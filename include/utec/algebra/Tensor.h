@@ -1,4 +1,6 @@
-#pragma once
+#ifndef TENSOR_H
+#define TENSOR_H
+
 #include <algorithm>
 #include <array>
 #include <numeric>
@@ -167,3 +169,4 @@ template <typename T, std::size_t Rank> class Tensor {
 };
 
 } // namespace utec::algebra
+#endif // !TENSOR_H

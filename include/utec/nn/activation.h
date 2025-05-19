@@ -1,4 +1,6 @@
-#pragma once
+#ifndef ACTIVATION_H
+#define ACTIVATION_H
+
 #include "../algebra/Tensor.h"
 #include "../algebra/matmul.h"
 #include "layer.h"
@@ -33,3 +35,4 @@ template <typename T> class ReLU : public ILayer<T> {
 };
 
 } // namespace utec::neural_network
+#endif // !ACTIVATION_H

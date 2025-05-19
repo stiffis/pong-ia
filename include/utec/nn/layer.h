@@ -1,4 +1,6 @@
-#pragma once
+#ifndef LAYER_H
+#define LAYER_H
+
 #include "../algebra/Tensor.h"
 #include "../algebra/matmul.h"
 
@@ -17,3 +19,4 @@ template <typename T> class ILayer {
 };
 
 } // namespace utec::neural_network
+#endif // !LAYER_H

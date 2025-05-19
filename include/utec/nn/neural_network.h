@@ -1,4 +1,6 @@
-#pragma once
+#ifndef NEURAL_NETWORK_H
+#define NEURAL_NETWORK_H
+
 #include "../algebra/Tensor.h"
 #include "../algebra/matmul.h"
 #include "activation.h"
@@ -60,3 +62,4 @@ template <typename T> class NeuralNetwork {
 };
 
 } // namespace utec::neural_network
+#endif // !NEURAL_NETWORK_H

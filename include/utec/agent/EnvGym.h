@@ -1,4 +1,6 @@
-#pragma once
+#ifndef ENVGYM_H
+#define ENVGYM_H
+
 #include "state.h"
 #include <random>
 
@@ -29,3 +31,4 @@ class EnvGym {
 };
 
 } // namespace utec::neural_network
+#endif // !ENVGYM_H

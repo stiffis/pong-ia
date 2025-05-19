@@ -1,3 +1,6 @@
+#ifndef PONG_AGENT_CPP
+#define PONG_AGENT_CPP
+
 // TODO: DELETE SMART POINTERS
 #include "PongAgent.h"
 #include <algorithm>
@@ -39,3 +42,4 @@ template class PongAgent<float>;
 template class PongAgent<double>;
 
 } // namespace utec::neural_network
+#endif // !PONG_AGENT_CPP
