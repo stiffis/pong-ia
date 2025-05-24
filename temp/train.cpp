@@ -27,8 +27,8 @@ void train_on_policy(utec::neural_network::NeuralNetwork<T> &net,
         while (!done) {
             // 1. Obtener vector Q para s
             utec::algebra::Tensor<T, 2> Qs =
-                net.forward(utec::algebra::Tensor<T, 2>({1, 3}) = {
-                                s.ball_x, s.ball_y, s.paddle_y});
+                net.forward(utec::algebra::Tensor<T, 2>({1, 5}) = {
+                                s.ball_x, s.ball_y, s.ball_vx, s.ball_vy, s.paddle_y});
 
             // 2. Elegir acción (epsilon-greedy para explorar)
             T epsilon = 0.1; // probabilidad de explorar
@@ -53,8 +53,8 @@ void train_on_policy(utec::neural_network::NeuralNetwork<T> &net,
 
             // 4. Obtener Q(s')
             utec::algebra::Tensor<T, 2> Qs_next =
-                net.forward(utec::algebra::Tensor<T, 2>({1, 3}) = {
-                                s_next.ball_x, s_next.ball_y, s_next.paddle_y});
+                net.forward(utec::algebra::Tensor<T, 2>({1, 5}) = {
+                                s_next.ball_x, s_next.ball_y, s_next.ball_vx, s_next.ball_vy, s_next.paddle_y});
 
             // 5. Calcular target vector igual a Q(s)
             utec::algebra::Tensor<T, 2> target = Qs;
@@ -74,8 +74,11 @@ void train_on_policy(utec::neural_network::NeuralNetwork<T> &net,
 
             target(0, a_idx) = reward + gamma * max_q_next;
 
-            // 7. Calcular gradiente de pérdida (Q - target) y hacer backward
-            utec::algebra::Tensor<T, 2> loss_grad = Qs - target;
+            // 7. Calcular gradiente de pérdida (Q(s,a) - target_value) para la acción tomada
+            // El gradiente es 0 para las acciones no tomadas.
+            utec::algebra::Tensor<T, 2> loss_grad(Qs.shape()); // Initialize with zeros
+            loss_grad.fill(static_cast<T>(0));
+            loss_grad(0, a_idx) = Qs(0, a_idx) - target(0, a_idx); // target(0, a_idx) is (r + gamma * max_q_next)
 
             net.backward(loss_grad);
 
@@ -95,12 +98,12 @@ int main() {
     using namespace utec::neural_network;
 
     NeuralNetwork<float> net;
-    net.add_layer(std::make_unique<Dense<float>>(3, 10));
+    net.add_layer(std::make_unique<Dense<float>>(5, 10));
     net.add_layer(std::make_unique<ReLU<float>>());
     net.add_layer(std::make_unique<Dense<float>>(10, 3));
 
     PongAgent<float> agent(std::make_unique<Dense<float>>(
-        3, 3)); // o pasar net como modelo si quieres
+        5, 3)); // o pasar net como modelo si quieres
 
     EnvGym env;
 

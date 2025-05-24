@@ -21,7 +21,7 @@ void test2() {
     std::cout << "test2: " << (res ? "Passed" : "Failed") << std::endl;
 }
 
-void test3() { // BUG: this shit need to throw an exception(error).
+void test3() { // Reshape is valid as long as total number of elements is the same.
     utec::algebra::Tensor<int, 3> t3(2, 2, 2);
     t3.reshape(2, 4, 1);
     bool res = (t3.shape() == std::array<size_t, 3>{2, 4, 1});
@@ -62,9 +62,11 @@ void test6() {
 
 void test7() {
     utec::algebra::Tensor<int, 2> m2(2, 3);
+    m2(0, 0) = 1; m2(0, 1) = 2; m2(0, 2) = 3;
+    m2(1, 0) = 4; m2(1, 1) = 5; m2(1, 2) = 6;
     auto mt = m2.transpose_2d();
     bool res =
-        (mt.shape() == std::array<size_t, 2>{3, 2} && mt(0, 1) == mt(1, 0));
+        (mt.shape() == std::array<size_t, 2>{3, 2} && mt(1,0) == 2 && mt(0,1) == 4 && mt(2,1) == 6);
     std::cout << "test7: " << (res ? "Passed" : "Failed") << std::endl;
 }
 

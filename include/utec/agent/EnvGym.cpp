@@ -18,6 +18,8 @@ State EnvGym::reset() {
     // Velocidad inicial bola hacia la paleta (a la derecha)
     ball_vx_ = 0.03f;
     ball_vy_ = dist_dir_(rng_);
+    state_.ball_vx = ball_vx_;
+    state_.ball_vy = ball_vy_;
     return state_;
 }
 
@@ -86,6 +88,8 @@ State EnvGym::step(int action, float &reward, bool &done) {
         reward = 0.f;
     }
 
+    state_.ball_vx = ball_vx_;
+    state_.ball_vy = ball_vy_;
     return state_;
 }
 

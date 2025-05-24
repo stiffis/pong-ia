@@ -12,11 +12,13 @@ PongAgent<T>::PongAgent(std::unique_ptr<ILayer<T>> model)
     : model_(std::move(model)) {}
 
 template <typename T> int PongAgent<T>::act(const State &state) {
-    // Convertir State a tensor 1x3: [ball_x, ball_y, paddle_y]
-    algebra::Tensor<T, 2> input(1, 3);
+    // Convertir State a tensor 1x5: [ball_x, ball_y, ball_vx, ball_vy, paddle_y]
+    algebra::Tensor<T, 2> input(1, 5);
     input(0, 0) = static_cast<T>(state.ball_x);
     input(0, 1) = static_cast<T>(state.ball_y);
-    input(0, 2) = static_cast<T>(state.paddle_y);
+    input(0, 2) = static_cast<T>(state.ball_vx);
+    input(0, 3) = static_cast<T>(state.ball_vy);
+    input(0, 4) = static_cast<T>(state.paddle_y);
 
     auto output = model_->forward(input);
 

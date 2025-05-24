@@ -15,14 +15,14 @@ int main() {
     using namespace utec::neural_network;
 
     NeuralNetwork<float> net;
-    net.add_layer(std::make_unique<Dense<float>>(3, 5));
+    net.add_layer(std::make_unique<Dense<float>>(5, 5));
     net.add_layer(std::make_unique<ReLU<float>>());
     net.add_layer(std::make_unique<Dense<float>>(5, 3));
 
     // Aquí idealmente cargarías pesos o entrenarías la red
 
     // Usamos solo la última capa para el agente (ejemplo simple)
-    auto model = std::make_unique<Dense<float>>(3, 3);
+    auto model = std::make_unique<Dense<float>>(5, 3);
     PongAgent<float> agent(std::move(model));
 
     EnvGym env;
@@ -36,7 +36,8 @@ int main() {
         state = env.step(action, reward, done);
 
         std::cout << "Step " << t << ": action=" << action
-                  << ", ball_y=" << state.ball_y
+                  << ", ball_x=" << state.ball_x << ", ball_y=" << state.ball_y
+                  << ", ball_vx=" << state.ball_vx << ", ball_vy=" << state.ball_vy
                   << ", paddle_y=" << state.paddle_y << ", reward=" << reward
                   << ", done=" << done << "\n";
 
