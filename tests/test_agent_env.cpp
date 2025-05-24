@@ -1,8 +1,6 @@
-#include <iostream>
-#include <vector>
-#include <numeric>
-#include <random> // Added for train_on_policy
 #include <iomanip> // For std::fixed and std::setprecision
+#include <iostream>
+#include <random> // Added for train_on_policy
 
 #include "../include/utec/agent/EnvGym.cpp" // Should ideally be .h and linked
 #include "../include/utec/agent/EnvGym.h"
@@ -14,16 +12,15 @@
 
 #include "../include/utec/nn/activation.h"
 #include "../include/utec/nn/dense.h"
-#include "../include/utec/nn/layer.h" // Not strictly needed if only using NN
-#include "../include/utec/nn/loss.h"   // Not strictly needed if only using NN
 #include "../include/utec/nn/neural_network.h"
 
 // Copied from temp/train.cpp
 template <typename T>
-void train_on_policy(utec::neural_network::NeuralNetwork<T> &net,
-                     utec::neural_network::PongAgent<T> &agent, // agent is not used in this version of train_on_policy
-                     utec::neural_network::EnvGym &env, size_t episodes,
-                     T gamma, T lr) {
+void train_on_policy(
+    utec::neural_network::NeuralNetwork<T> &net,
+    utec::neural_network::PongAgent<T>
+        &agent, // agent is not used in this version of train_on_policy
+    utec::neural_network::EnvGym &env, size_t episodes, T gamma, T lr) {
     std::default_random_engine rng(std::random_device{}());
     std::uniform_real_distribution<T> dist(0, 1);
 
@@ -69,7 +66,8 @@ void train_on_policy(utec::neural_network::NeuralNetwork<T> &net,
             next_state_tensor(0, 2) = static_cast<T>(s_next.ball_vx);
             next_state_tensor(0, 3) = static_cast<T>(s_next.ball_vy);
             next_state_tensor(0, 4) = static_cast<T>(s_next.paddle_y);
-            utec::algebra::Tensor<T, 2> Qs_next = net.forward(next_state_tensor);
+            utec::algebra::Tensor<T, 2> Qs_next =
+                net.forward(next_state_tensor);
 
             // 5. Calcular target vector igual a Q(s)
             utec::algebra::Tensor<T, 2> target = Qs;
@@ -89,11 +87,15 @@ void train_on_policy(utec::neural_network::NeuralNetwork<T> &net,
 
             target(0, a_idx) = reward + gamma * max_q_next;
 
-            // 7. Calcular gradiente de pérdida (Q(s,a) - target_value) para la acción tomada
-            // El gradiente es 0 para las acciones no tomadas.
-            utec::algebra::Tensor<T, 2> loss_grad(Qs.shape()); // Initialize with zeros
+            // 7. Calcular gradiente de pérdida (Q(s,a) - target_value) para la
+            // acción tomada El gradiente es 0 para las acciones no tomadas.
+            utec::algebra::Tensor<T, 2> loss_grad(
+                Qs.shape()); // Initialize with zeros
             loss_grad.fill(static_cast<T>(0));
-            loss_grad(0, a_idx) = Qs(0, a_idx) - target(0, a_idx); // target(0, a_idx) is (r + gamma * max_q_next)
+            loss_grad(0, a_idx) =
+                Qs(0, a_idx) -
+                target(0,
+                       a_idx); // target(0, a_idx) is (r + gamma * max_q_next)
 
             net.backward(loss_grad);
 
@@ -103,12 +105,12 @@ void train_on_policy(utec::neural_network::NeuralNetwork<T> &net,
             s = s_next;
         }
 
-        if ((ep + 1) % 100 == 0) { // Print every 100 episodes for less verbose output
+        if ((ep + 1) % 100 ==
+            0) { // Print every 100 episodes for less verbose output
             std::cout << "Training Episode " << ep + 1 << " finished\n";
         }
     }
 }
-
 
 int main() {
     using namespace utec::neural_network;
@@ -123,7 +125,9 @@ int main() {
 
     // Training Phase
     std::cout << "Starting training phase..." << std::endl;
-    train_on_policy(net, agent, env, 1000, 0.99f, 0.01f); // agent is passed but not used by this train_on_policy
+    train_on_policy(
+        net, agent, env, 1000, 0.99f,
+        0.01f); // agent is passed but not used by this train_on_policy
     std::cout << "Training phase completed." << std::endl;
 
     // Evaluation Phase
@@ -131,7 +135,8 @@ int main() {
     const int num_eval_episodes = 100;
     int successful_returns = 0;
     int total_potential_returns = 0;
-    const int max_steps_per_episode = 300; // Max steps to prevent infinite loops
+    const int max_steps_per_episode =
+        300; // Max steps to prevent infinite loops
 
     for (int i = 0; i < num_eval_episodes; ++i) {
         State current_eval_state = env.reset();
@@ -150,7 +155,7 @@ int main() {
 
             if (eval_reward > 0 && !return_counted_this_episode) {
                 successful_returns++;
-                return_counted_this_episode = true; 
+                return_counted_this_episode = true;
             }
 
             if (eval_done) {
@@ -158,22 +163,26 @@ int main() {
             }
         }
         if (ball_reached_paddle_zone || eval_done) {
-             total_potential_returns++;
+            total_potential_returns++;
         }
     }
 
     // Calculate and Report Success Rate
     float success_rate = 0.0f;
     if (total_potential_returns > 0) {
-        success_rate = static_cast<float>(successful_returns) / total_potential_returns;
+        success_rate =
+            static_cast<float>(successful_returns) / total_potential_returns;
     }
-    std::cout << "Evaluation Results: " << successful_returns << "/" << total_potential_returns << " successful returns." << std::endl;
-    std::cout << std::fixed << std::setprecision(2); // For consistent percentage output
+    std::cout << "Evaluation Results: " << successful_returns << "/"
+              << total_potential_returns << " successful returns." << std::endl;
+    std::cout << std::fixed
+              << std::setprecision(2); // For consistent percentage output
     std::cout << "Success rate: " << success_rate * 100.0f << "%" << std::endl;
 
     // Assertion for Epic 3
     bool test_passed = (success_rate >= 0.70f);
-    std::cout << "Epic 3 Test (>=70% returns): " << (test_passed ? "Passed" : "Failed") << std::endl;
-    
+    std::cout << "Epic 3 Test (>=70% returns): "
+              << (test_passed ? "Passed" : "Failed") << std::endl;
+
     return test_passed ? 0 : 1;
 }
