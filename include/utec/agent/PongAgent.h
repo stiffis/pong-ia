@@ -9,20 +9,20 @@
 #include "../nn/loss.h"
 #include "../nn/neural_network.h"
 #include "state.h"
-#include <memory>
+#include <memory> // Keep for other potential uses, or remove if truly unused elsewhere
 
 namespace utec::neural_network {
 
 template <typename T> class PongAgent {
   public:
-    // Construye con modelo entrenado (ILayer<T> con forward)
-    explicit PongAgent(std::unique_ptr<ILayer<T>> model);
+    // Construye con modelo entrenado (NeuralNetwork<T> con forward)
+    explicit PongAgent(NeuralNetwork<T>& model);
 
     // Decide acción: -1 (arriba), 0 (quieto), +1 (abajo)
     int act(const State &state);
 
   private:
-    std::unique_ptr<ILayer<T>> model_;
+    NeuralNetwork<T>& model_;
 };
 
 } // namespace utec::neural_network

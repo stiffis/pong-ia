@@ -1,15 +1,11 @@
-#ifndef PONG_AGENT_CPP
-#define PONG_AGENT_CPP
-
-// TODO: DELETE SMART POINTERS
 #include "PongAgent.h"
 #include <algorithm>
 
 namespace utec::neural_network {
 
 template <typename T>
-PongAgent<T>::PongAgent(std::unique_ptr<ILayer<T>> model)
-    : model_(std::move(model)) {}
+PongAgent<T>::PongAgent(NeuralNetwork<T>& model)
+    : model_(model) {}
 
 template <typename T> int PongAgent<T>::act(const State &state) {
     // Convertir State a tensor 1x5: [ball_x, ball_y, ball_vx, ball_vy, paddle_y]
@@ -20,7 +16,7 @@ template <typename T> int PongAgent<T>::act(const State &state) {
     input(0, 3) = static_cast<T>(state.ball_vy);
     input(0, 4) = static_cast<T>(state.paddle_y);
 
-    auto output = model_->forward(input);
+    auto output = model_.forward(input);
 
     // Salida es vector 1x3 con valores para acciones -1,0,1 respectivamente
     // Escoger índice máximo
@@ -44,4 +40,3 @@ template class PongAgent<float>;
 template class PongAgent<double>;
 
 } // namespace utec::neural_network
-#endif // !PONG_AGENT_CPP

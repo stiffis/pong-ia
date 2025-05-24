@@ -26,9 +26,13 @@ void train_on_policy(utec::neural_network::NeuralNetwork<T> &net,
 
         while (!done) {
             // 1. Obtener vector Q para s
-            utec::algebra::Tensor<T, 2> Qs =
-                net.forward(utec::algebra::Tensor<T, 2>({1, 5}) = {
-                                s.ball_x, s.ball_y, s.ball_vx, s.ball_vy, s.paddle_y});
+            utec::algebra::Tensor<T, 2> current_state_tensor(1, 5);
+            current_state_tensor(0, 0) = static_cast<T>(s.ball_x);
+            current_state_tensor(0, 1) = static_cast<T>(s.ball_y);
+            current_state_tensor(0, 2) = static_cast<T>(s.ball_vx);
+            current_state_tensor(0, 3) = static_cast<T>(s.ball_vy);
+            current_state_tensor(0, 4) = static_cast<T>(s.paddle_y);
+            utec::algebra::Tensor<T, 2> Qs = net.forward(current_state_tensor);
 
             // 2. Elegir acción (epsilon-greedy para explorar)
             T epsilon = 0.1; // probabilidad de explorar
@@ -52,9 +56,13 @@ void train_on_policy(utec::neural_network::NeuralNetwork<T> &net,
             utec::neural_network::State s_next = env.step(action, reward, done);
 
             // 4. Obtener Q(s')
-            utec::algebra::Tensor<T, 2> Qs_next =
-                net.forward(utec::algebra::Tensor<T, 2>({1, 5}) = {
-                                s_next.ball_x, s_next.ball_y, s_next.ball_vx, s_next.ball_vy, s_next.paddle_y});
+            utec::algebra::Tensor<T, 2> next_state_tensor(1, 5);
+            next_state_tensor(0, 0) = static_cast<T>(s_next.ball_x);
+            next_state_tensor(0, 1) = static_cast<T>(s_next.ball_y);
+            next_state_tensor(0, 2) = static_cast<T>(s_next.ball_vx);
+            next_state_tensor(0, 3) = static_cast<T>(s_next.ball_vy);
+            next_state_tensor(0, 4) = static_cast<T>(s_next.paddle_y);
+            utec::algebra::Tensor<T, 2> Qs_next = net.forward(next_state_tensor);
 
             // 5. Calcular target vector igual a Q(s)
             utec::algebra::Tensor<T, 2> target = Qs;
@@ -102,8 +110,7 @@ int main() {
     net.add_layer(std::make_unique<ReLU<float>>());
     net.add_layer(std::make_unique<Dense<float>>(10, 3));
 
-    PongAgent<float> agent(std::make_unique<Dense<float>>(
-        5, 3)); // o pasar net como modelo si quieres
+    PongAgent<float> agent(net);
 
     EnvGym env;
 

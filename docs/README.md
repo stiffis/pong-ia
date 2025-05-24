@@ -42,12 +42,16 @@ Sigue estos pasos para clonar y ejecutar el proyecto en tu máquina local:
 
 2. Compila el proyecto (asegúrate de tener un compilador de C++ instalado):
    ```bash
-   g++ -o pong main.cpp -std=c++17
+   # This will build the training executable (pong_ai_train) and test executables.
+   ./build.sh
    ```
 
 3. Ejecuta el juego:
    ```bash
-   ./pong
+   # To run the training process:
+   ./pong_ai_train
+   # Test executables are built into the build/tests/ directory.
+   # For example: ./build/tests/test_tensor_run
    ```
 
 ---
@@ -56,8 +60,8 @@ Sigue estos pasos para clonar y ejecutar el proyecto en tu máquina local:
 1. Al iniciar el juego, puedes elegir entre:
    - Jugar contra la IA.
    - Ver cómo dos IAs compiten entre sí.
-
-2. Modifica los parámetros de la IA en el archivo de configuracion (`config.h`) para experimentar con distintos niveles de dificultad.
+   (Nota: La funcionalidad de juego interactivo o IA vs IA aún no está implementada en `pong_ai_train`.
+   El ejecutable `pong_ai_train` corre el proceso de entrenamiento de la IA.)
 
 ---
 

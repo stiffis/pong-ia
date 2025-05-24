@@ -1,6 +1,3 @@
-#ifndef ENVGYM_CPP
-#define ENVGYM_CPP
-
 #include "EnvGym.h"
 
 namespace utec::neural_network {
@@ -94,4 +91,3 @@ State EnvGym::step(int action, float &reward, bool &done) {
 }
 
 } // namespace utec::neural_network
-#endif // !ENVGYM_CPP
